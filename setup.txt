@@ -1,0 +1,72 @@
+Environment Setup for Odometer Dataset Processing and TrOCR
+-------------------------------------------------------------------------------------------
+
+## 1. **System Requirements**
+Ensure the following system requirements are met:
+- **Python**: Version 3.8 or higher.
+- **Operating System**: Linux, macOS, or Windows (Windows users need to install CUDA and drivers for GPU usage).
+- **CUDA (Optional)**: For GPU acceleration with PyTorch, install the appropriate version of CUDA supported by your system.
+-------------------------------------------------------------------------------------------
+
+## 2. **Install Required Libraries**
+
+The following libraries are required to run the project, including PyTorch for deep learning, Hugging Face for OCR, and others for data manipulation and image processing.
+
+**Install PyTorch (with CUDA if available):** 
+* For **CUDA-enabled** installations (ensure your GPU drivers are compatible):
+`pip install torch torchvision torchaudio -f https://download.pytorch.org/whl/cuda/11.7/torch_stable.html` 
+* For **CPU-only** installation:
+`pip install torch torchvision torchaudio`
+
+**Install Other packages:** 
+`pip install pandas pillow requests`
+`pip install transformers huggingface_hub`
+`pip install opencv-python matplotlib`
+
+-------------------------------------------------------------------------------------------
+
+## 3. **Download and Load the TrOCR Model**
+
+The project uses the Hugging Face TrOCR model to perform Optical Character Recognition (OCR) on cropped odometer images.
+1) Login to Hugging Face: To access the models, you need to log in to your Hugging Face account. Generate a token from Hugging Face website and use it as follows:
+```from huggingface_hub import login
+login("your_huggingface_token_here")```
+
+2) Load the TrOCR Model and Processor: The TrOCR model is used for reading printed text from images:
+```from transformers import TrOCRProcessor, VisionEncoderDecoderModel
+processor = TrOCRProcessor.from_pretrained("microsoft/trocr-large-printed")
+model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-large-printed")```
+-------------------------------------------------------------------------------------------
+
+## 4. **Dataset Preparation**
+Ensure your dataset is structured in the following format:
+
+
+project_folder/
+├── CQ/						# Folder containing your image files
+├── yolov5/                # Directory for YOLO object detection model outputs
+│   ├── runs/
+│   	└── detect/			# This folder has detected odometer regions, by the fine-tuned YOLOv5 model, trained on the training data
+└── setup.md               # This setup file
+
+-------------------------------------------------------------------------------------------
+
+## 5. **Running the code**
+Once the folder structure is verified,
+1) yolov5 model folder should be in the same way as it has the fine-tuned yolo model.
+2) The test images are placed under the "CQ_Test" folder.
+3) Ensure all the requried packages are installed. I have prepared this code in an anaconda environment. It comes with many packages pre-installed. However, I have listed the ones that are necessary.
+4) Open Command Prompt/Terminal/Anaconda Prompt in the "CQ" directory. Use the following command.
+`python test_predict.py`
+5) Make sure to have an active internet connection to verify huggingface token.
+6) The intermediate stages are shown for user understanding, once the execution is done, the code terminates.
+
+-------------------------------------------------------------------------------------------
+
+## 6. **Results**
+The results are stored like a dataframe - "out_df".
+They are also saved in a .csv file "CQ_Final_Predictions.csv" for exporting.
+
+
+
+
